@@ -32,13 +32,13 @@ int
 fetchstr(uint addr, char **pp)
 {
   char *s, *ep;
-  struct proc *curproc = myproc();
+  //struct proc *curproc = myproc(); // cs153
 
-  if(addr + 4 >= KERNBASE) //cs153
+  if(addr + 4 >= KERNBASE) // cs153
     return -1;
   *pp = (char*)addr;
-  ep = (char*)curproc->sz;
-  for(s = *pp; s < ep; s++){
+  ep = (char*)KERNBASE; // cs153
+  for(s = *pp; s < ep; s++){ // cs153
     if(*s == 0)
       return s - *pp;
   }
