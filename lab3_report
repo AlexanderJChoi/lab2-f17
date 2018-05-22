@@ -1,0 +1,15 @@
+Files Changed:
+Makefile
+
+vm.c
+exec.c
+syscall.c
+trap.c
+
+How to test Correctness:
+Our user program is named lab3_test.
+It can be run from within xv6.
+- unzip file
+- run make
+- run make qemu
+- type 'lab3_test' [ENTER]

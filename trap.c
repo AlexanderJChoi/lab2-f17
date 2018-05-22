@@ -60,6 +60,12 @@ trap(struct trapframe *tf)
     ideintr();
     lapiceoi();
     break;
+
+  case T_PGFLT:
+    //uint CR2 = rcr2();
+    if(rcr2() < tf->esp)
+      allocuvm(myproc()->pgdir,PGROUNDDOWN(tf->esp-PGSIZE),PGROUNDDOWN(tf->esp-PGSIZE) + 4);
+    break;
   case T_IRQ0 + IRQ_IDE+1:
     // Bochs generates spurious IDE1 interrupts.
     break;
