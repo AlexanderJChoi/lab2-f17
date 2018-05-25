@@ -17,9 +17,10 @@
 int
 fetchint(uint addr, int *ip)
 {
-  //struct proc *curproc = myproc(); // cs153
+  struct proc *curproc = myproc(); // cs153
+  int *hp = (int*)curproc->sz, *sp = (int*)curproc->tf->esp;
 
-  if(addr + 4 >= KERNBASE) // cs153
+  if(addr + 4 >= KERNBASE || ((int*)addr > hp && (int*)addr < sp)) // cs153
     return -1;
   *ip = *(int*)(addr);
   return 0;
@@ -31,14 +32,16 @@ fetchint(uint addr, int *ip)
 int
 fetchstr(uint addr, char **pp)
 {
-  char *s, *ep;
-  //struct proc *curproc = myproc(); // cs153
+  char *s, *ep, *hp, *sp;
+  struct proc *curproc = myproc(); // cs153
+  hp = (char*)curproc->sz;
+  sp = (char*)curproc->tf->esp;
 
-  if(addr + 4 >= KERNBASE) // cs153
+  if(addr + 4 >= KERNBASE || ((char*)addr  > hp && (char*)addr < sp)) // cs153
     return -1;
   *pp = (char*)addr;
   ep = (char*)KERNBASE; // cs153
-  for(s = *pp; s < ep; s++){ // cs153
+  for(s = *pp; (*pp > sp && s < ep) || (*pp < hp && s < hp); s++){ // cs153
     if(*s == 0)
       return s - *pp;
   }
@@ -63,7 +66,7 @@ argptr(int n, char **pp, int size)
  
   if(argint(n, &i) < 0)
     return -1;
-  if(size < 0 || (uint)i + 4 >= KERNBASE) // cs153
+  if(size < 0 || (uint)i + size >= KERNBASE) // cs153
     return -1;
   *pp = (char*)i;
   return 0;
